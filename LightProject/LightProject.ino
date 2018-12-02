@@ -6,10 +6,18 @@ struct FreqData {
 void setup() {
   Serial.begin(115200);
 
-  setupAudioService();
-  setupNeopixel();
+//  setupAudioService();
+//  setupNeopixel();
 }
 
 void loop() {
-  startListening();
+//  startListening();
 }
+
+//void foo() {
+//  bar();
+//}
+//
+//void bar() {
+//  
+//}

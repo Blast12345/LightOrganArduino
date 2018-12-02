@@ -20,12 +20,12 @@ void setupAudioService() {
 
 
 void startListening() {
-    for (int i = 0; i < BASS_SAMPLES; i++)
+  for (int i = 0; i < BASS_SAMPLES; i++)
   {
     microseconds = micros() - oldTime;
     oldTime = microseconds;
 
-    double newAnalogRead = analogRead(0);
+    double newAnalogRead = analogRead(analog_pin);
 
     vRealBass[i] = newAnalogRead;
     vImagBass[i] = 0;
@@ -38,7 +38,7 @@ void startListening() {
     }
   }
 
-  computeBass();
+//  computeBass();
 }
 
 
@@ -83,14 +83,14 @@ void computeBass() {
     //    Serial.println(vRealBass[i], 1);    //View only this line in serial plotter to visualize the bins
   }
 
-  unsigned int dataLength = sizeof(data) / sizeof(data[0]);
-  updateBassColor(data, dataLength);
+//  unsigned int dataLength = sizeof(data) / sizeof(data[0]);
+//  updateBassColor(data, dataLength);
   delay(1000000);
 }
 
-void updateBassColor(FreqData data[], unsigned int dataLength) {
-
-}
+//void updateBassColor(FreqData data[], unsigned int dataLength) {
+//
+//}
 
 
 void computeVocal() {
