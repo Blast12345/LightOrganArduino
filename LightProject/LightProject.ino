@@ -1,165 +1,109 @@
-#include <ESP8266WiFi.h>
-#include <Adafruit_NeoPixel.h> //https://github.com/adafruit/Adafruit_NeoPixel
-
-//-------- Customise the above values --------
-
-#define LED_TOTAL 12 // Your Led strip pixel
-#define LED_HALF LED_TOTAL/2
-#define VISUALS 6
-#define analog_pin A0
-#define LED_PIN 13
-#define online_pin 4
-
-Adafruit_NeoPixel strand = Adafruit_NeoPixel(LED_TOTAL, LED_PIN, NEO_GRB + NEO_KHZ800);
-
-int reading;
-
-uint16_t gradient = 0;
-uint16_t thresholds[] = {1529, 1019, 764, 764, 764, 1274};
-uint8_t palette = 0;
-uint8_t visual = 0;
-uint8_t volume = 0;
-uint8_t last = 0;
-
-float maxVol = 15;
-float avgBump = 0;
-float avgVol = 0;
-
-int8_t pos[LED_TOTAL] = { -2};
-uint8_t rgb[LED_TOTAL][3] = {0};
-
-bool shuffle = true;
-bool bump = true;
-
-bool left = false;
-int8_t dotPos = 0;
-float timeBump = 0;
-float avgTime = 0;
+#include "arduinoFFT.h" // Standard Arduino FFT library
 
 
-//Initialization
+
+#define BASS_SAMPLES 1024             //Must be a power of 2 - higher is slower, but allows for lower frequency
+#define BASS_SAMPLING_FREQUENCY 10000 //Hz, must be less than 10000 due to ADC
+arduinoFFT BassFFT = arduinoFFT();
+unsigned int bass_sampling_period_us;
+
+
+
+#define VOCAL_SAMPLES 256             //Must be a power of 2 - higher is slower, but allows for lower frequency
+#define VOCAL_SAMPLING_FREQUENCY 10000 //Hz, must be less than 10000 due to ADC
+arduinoFFT VocalFFT = arduinoFFT();
+unsigned int vocal_sampling_period_us;
+
+
+
+unsigned long microseconds, oldTime;
+
+double vReal[BASS_SAMPLES];
+double vImag[BASS_SAMPLES];
+
 void setup() {
-  pinMode(LED_PIN, OUTPUT);
-  pinMode(online_pin, OUTPUT);
   Serial.begin(115200);
-  Serial.println();
-  strand.begin();
+  bass_sampling_period_us = round(1000000 * (1.0 / BASS_SAMPLING_FREQUENCY));
+  vocal_sampling_period_us = round(1000000 * (1.0 / VOCAL_SAMPLING_FREQUENCY));
 }
 
 void loop() {
-  reading = digitalRead(online_pin);
-  getDance();
-}
 
-//Primary
-void getDance() {
-  volume = analogRead(analog_pin);
+  for (int i = 0; i < BASS_SAMPLES; i++)
+  {
+    microseconds = micros() - oldTime;
+    oldTime = microseconds;
 
+    vReal[i] = analogRead(0);
+    vImag[i] = 0;
 
-  if (volume < avgVol / 2.0 || volume < 15) {
-    volume = 0;
-  } else {
-    avgVol = (avgVol + volume) / 2.0;
-  }
+    //
 
-  if (volume > maxVol) maxVol = volume;
-  if (gradient > thresholds[palette]) {
-    gradient %= thresholds[palette] + 1;
-    maxVol = (maxVol + volume) / 2.0;
-  }
-
-  if (volume - last > 10) avgBump = (avgBump + (volume - last)) / 2.0;
-  bump = (volume - last > avgBump * .9);
-
-  if (bump) {
-    avgTime = (((millis() / 1000.0) - timeBump) + avgTime) / 2.0;
-    timeBump = millis() / 1000.0;
-  }
-
-  Visualize();
-  gradient++;
-  last = volume;
-  delay(30);
-}
-
-///////////////////////////////////////////////////////////////////////
-
-
-void Visualize() {
-  return Pulse();
-}
-
-//////////////////////////////////////////////////
-
-
-uint32_t ColorPalette(float num) {
-  return (num < 0) ? Rainbow(gradient) : Rainbow(num);
-}
-
-///////////////////////////////////////////////////////////
-
-
-void Pulse() {
-  fade(0.9);
-  if (bump) gradient += thresholds[palette] / 24;
-  if (volume > 0) {
-    uint32_t col = ColorPalette(-1);
-    int start = LED_HALF - (LED_HALF * (volume / maxVol));
-    int finish = LED_HALF + (LED_HALF * (volume / maxVol)) + strand.numPixels() % 2;
-
-    for (int i = start; i < finish; i++) {
-      float damp = sin((i - start) * PI / float(finish - start));
-      damp = pow(damp, 2.0);
-      uint32_t col2 = strand.getPixelColor(i);
-      uint8_t colors[3];
-      float avgCol = 0;
-      float avgCol2 = 0;
-      for (int k = 0; k < 3; k++) {
-        colors[k] = split(col, k) * damp * pow(volume / maxVol, 2);
-        avgCol += colors[k];
-        avgCol2 += split(col2, k);
-      }
-      avgCol /= 3.0, avgCol2 /= 3.0;
-      if (avgCol > avgCol2) strand.setPixelColor(i, strand.Color(colors[0], colors[1], colors[2]));
+//    delay(bass_sampling_period_us);
+    while (micros() < (microseconds + bass_sampling_period_us)) {
+      /* do nothing until we enter the next sampling period - think of this as a delay */
     }
   }
-  strand.show();
+
+  bassLoop();
+
+  /*SAMPLING*/
+  //  for (int i = 0; i < SAMPLES; i++)
+  //  {
+  //    microseconds = micros() - oldTime;
+  //    oldTime = microseconds;
+  //
+  //    vReal[i] = analogRead(0);
+  //    vImag[i] = 0;
+  //
+  //    while (micros() < (microseconds + sampling_period_us)) {
+  //      /* do nothing until we enter the next sampling period - think of this as a delay */
+  //    }
+  //  }
+
+  //if we have enough samples for bass, call the bassLoop();
+
+  //if we have enough samples for vocals, call the vocalLoop();
 }
 
-//////////////////////////////////////////////////////////////
+void bassLoop() {
+  BassFFT.Windowing(vReal, BASS_SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+  BassFFT.Compute(vReal, vImag, BASS_SAMPLES, FFT_FORWARD);
+  BassFFT.ComplexToMagnitude(vReal, vImag, BASS_SAMPLES);
+  double peak = BassFFT.MajorPeak(vReal, BASS_SAMPLES, BASS_SAMPLING_FREQUENCY);
+
+  /*PRINT RESULTS*/
+  Serial.println(peak);     //Print out what frequency is the most dominant.
 
 
-void fade(float damper) {
-  for (int i = 0; i < strand.numPixels(); i++) {
-    uint32_t col = strand.getPixelColor(i);
-    if (col == 0) continue;
-    float colors[3];
-    for (int j = 0; j < 3; j++) colors[j] = split(col, j) * damper;
-    strand.setPixelColor(i, strand.Color(colors[0] , colors[1], colors[2]));
-  }
+  //  for (int i = 0; i < (SAMPLES / 2); i++)
+  //  {
+  //    /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
+  //
+  //    Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / SAMPLES, 1);
+  //    Serial.print(" ");
+  //    Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
+  //  }
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+void vocalLoop() {
+  VocalFFT.Windowing(vReal, VOCAL_SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+  VocalFFT.Compute(vReal, vImag, VOCAL_SAMPLES, FFT_FORWARD);
+  VocalFFT.ComplexToMagnitude(vReal, vImag, VOCAL_SAMPLES);
+  double peak = VocalFFT.MajorPeak(vReal, VOCAL_SAMPLES, VOCAL_SAMPLING_FREQUENCY);
+
+  //TODO: Filter output to 400-3200hz. Determine amplitude of this range. Determine a minimum/baseline value in which there is NO LED change.
+
+  /*PRINT RESULTS*/
+  Serial.println(peak);     //Print out what frequency is the most dominant.
 
 
-uint8_t split(uint32_t color, uint8_t i ) {
-  if (i == 0) return color >> 16;
-  if (i == 1) return color >> 8;
-  if (i == 2) return color >> 0;
-  return -1;
-}
-
-//////////////////////////////////////////////////
-//COLOR PALETTES
-//////////////////////////////////////////////////
-
-
-uint32_t Rainbow(unsigned int i) {
-  if (i > 1529) return Rainbow(i % 1530);
-  if (i > 1274) return strand.Color(255, 0, 255 - (i % 255));
-  if (i > 1019) return strand.Color((i % 255), 0, 255);
-  if (i > 764) return strand.Color(0, 255 - (i % 255), 255);
-  if (i > 509) return strand.Color(0, 255, (i % 255));
-  if (i > 255) return strand.Color(255 - (i % 255), 255, 0);
-  return strand.Color(255, i, 0);
+  //  for (int i = 0; i < (SAMPLES / 2); i++)
+  //  {
+  //    /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
+  //
+  //    Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / SAMPLES, 1);
+  //    Serial.print(" ");
+  //    Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
+  //  }
 }
