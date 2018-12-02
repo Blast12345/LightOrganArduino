@@ -13,11 +13,3 @@ void setup() {
 void loop() {
 //  startListening();
 }
-
-//void foo() {
-//  bar();
-//}
-//
-//void bar() {
-//  
-//}
