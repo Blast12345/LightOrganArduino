@@ -10,4 +10,4 @@ extern const int BASS_SAMPLES = 1024; //Must be a power of 2 - higher is slower,
 extern const int VOCAL_SAMPLES = 256;
 
 //Filtering
-extern const double 0.1;
+extern const double NOISE_BASELINE = 0.1;

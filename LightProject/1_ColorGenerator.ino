@@ -8,15 +8,36 @@ struct Color {
 
 class ColorGenerator {
   public:
-  static Color getColor(FreqData data[], int len, ) {
-    double section = PI / range * offset;
-    if(section < PI / 2) {
-      return Color { absRelu(255*cos(section), false), 255*sin(section), absRelu(255*cos(section), true) };
+  static Color getColor(struct FreqData data[], unsigned int len) {
+    double slice = PI / (len - 1);
+    filterNoise(data, len)
+    double lowest = getLowestAmp(data, len);
+    double highest = getHighestAmp(data, len);
+    
+    struct Color avgCol = struct Color { 
+                                         absRelu(255.0*(data[0].amplitude - lowest)/(highest - lowest)*cos(0), false),
+                                         255.0*(data[0].amplitude - lowest)/(highest - lowest)*sin(0),
+                                         absRelu(255.0*(data[0].amplitude - lowest)/(highest - lowest)*cos(0), true)
+                                       };
+    for(i = 1; i < len; i++) {
+      if(data[i].amplitude == 0) {
+        break;
+      }
+      
+      Color color = struct Color { 
+                                   absRelu(255.0*(data[i].amplitude - lowest)/(highest - lowest)*cos(slice*i), false),
+                                   255.0*(data[i].amplitude - lowest)/(highest - lowest)*sin(slice*i),
+                                   absRelu(255.0*(data[i].amplitude - lowest)/(highest - lowest)*cos(slice*i), true)
+                                 };
+                                 
+      avgCol = averageColor(avgCol, color);
     }
+
+    return avgCol
   }
 
   private:
-  static int absRelu(int val, bool neg) {
+  static double absRelu(double val, bool neg) {
     if(neg) {
       return val < 0 ? abs(val) : 0;
     } else {
@@ -24,7 +45,52 @@ class ColorGenerator {
     }
   }
 
-  static FreqData[] filterNoise(FreqData data[], int len) {
+  static void filterNoise(struct FreqData data[], unsigned int len) {
+    unsigned int skip = 0;
+ 
+    for(int i = 0; i < len - skip; i++) {
+      if(data[i].amplitude < NOISE_BASELINE) {
+        skip++;
+      }
+      data[i] = data[i + skip];
+    }
+
+    for(i = len - skip; i < len; i++) {
+      data[i] = struct FreqData{0,0};
+    }
+  }
+
+  static Color averageColor(struct Color c1, struct Color c2) {
+    return Color{sqrt(c1.R^2 + c2.R^2), sqrt(c1.G^2 + c2.G^2), sqrt(c1.B^2 + c2.b^2)}
+  }
+
+  static double getLowestAmp(struct FreqData data[], unsigned int len) {
+    double lowest = data[0].amplitude;
+    for(int i = 0; i < len; i++) {
+      if(data[i].amplitude == 0) {
+        break;
+      }
+
+      if(lowest > data[i].amplitude) {
+        lowest = data[i].amplitude;
+      }
+    }
     
+    return lowest;
+  }
+
+    static double getHighestAmp(struct FreqData data[], unsigned int len) {
+    double highest = data[0].amplitude;
+    for(int i = 0; i < len; i++) {
+      if(data[i].amplitude == 0) {
+        break;
+      }
+
+      if(highest < data[i].amplitude) {
+        highest = data[i].amplitude;
+      }
+    }
+    
+    return highest;
   }
 };
