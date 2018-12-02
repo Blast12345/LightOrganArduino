@@ -8,7 +8,7 @@ struct Color {
 
 class ColorGenerator {
   public:
-  static Color getColor(int offset, int range) {
+  static Color getColor(FreqData data[], int len, ) {
     double section = PI / range * offset;
     if(section < PI / 2) {
       return Color { absRelu(255*cos(section), false), 255*sin(section), absRelu(255*cos(section), true) };
@@ -22,5 +22,9 @@ class ColorGenerator {
     } else {
       return val > 0 ? val : 0;
     }
+  }
+
+  static FreqData[] filterNoise(FreqData data[], int len) {
+    
   }
 };
