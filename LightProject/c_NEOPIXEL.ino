@@ -6,11 +6,11 @@ void setupNeopixel() {
   strand.begin();
 }
 
-//void setBass(Color color) {
-//  for (int led = 0; led < LED_TOTAL; led++)
-//  {
-//    strand.setPixelColor(led, strand.Color(color.R, color.G, color.B));
-//  }
-//
-//  strand.show();
-//}
+void setBass(struct Color color) {
+  for (int led = 0; led < LED_TOTAL; led++)
+  {
+    strand.setPixelColor(led, strand.Color(color.R, color.G, color.B));
+  }
+
+  strand.show();
+}
