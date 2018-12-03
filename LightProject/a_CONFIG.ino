@@ -3,6 +3,7 @@
 const int LED_TOTAL = 12;
 const double LED_HALF = LED_TOTAL / 2;
 const int LED_PIN = 13;
+//TODO: Color rotation  (degrees offset)
 
 //FFT
 const int analog_pin = A0;
@@ -11,4 +12,4 @@ const int BASS_SAMPLES = 1024; //Must be a power of 2 - higher is slower, but al
 const int VOCAL_SAMPLES = 256;
 
 //Filtering
-const double NOISE_BASELINE = 0.1;
+const double NOISE_BASELINE = 70000;
