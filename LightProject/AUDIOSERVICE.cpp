@@ -1,4 +1,7 @@
-#include "arduinoFFT.h" // Standard Arduino FFT library
+#include <Arduino.h>
+#include "CONFIG.cpp"
+#include "FrequencyData.cpp"
+
 
 
 unsigned int sampling_period_us;
