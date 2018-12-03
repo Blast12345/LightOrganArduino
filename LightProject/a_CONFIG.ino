@@ -1,3 +1,4 @@
+#include "config.h" //I don't know what this does, but it makes scary errors go away.
 //LED
 const int LED_TOTAL = 12;
 const double LED_HALF = LED_TOTAL / 2;
