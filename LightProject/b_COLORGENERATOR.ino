@@ -10,21 +10,21 @@ class ColorGenerator {
   public:
   static Color getColor(struct FreqData data[], unsigned int len) {
     double slice = PI / (len - 1);
-    filterNoise(data, len)
+    filterNoise(data, len);
     double lowest = getLowestAmp(data, len);
     double highest = getHighestAmp(data, len);
     
-    struct Color avgCol = struct Color { 
+    struct Color avgCol = Color { 
                                          absRelu(255.0*(data[0].amplitude - lowest)/(highest - lowest)*cos(0), false),
                                          255.0*(data[0].amplitude - lowest)/(highest - lowest)*sin(0),
                                          absRelu(255.0*(data[0].amplitude - lowest)/(highest - lowest)*cos(0), true)
                                        };
-    for(i = 1; i < len; i++) {
+    for(int i = 1; i < len; i++) {
       if(data[i].amplitude == 0) {
         break;
       }
       
-      Color color = struct Color { 
+      Color color = Color { 
                                    absRelu(255.0*(data[i].amplitude - lowest)/(highest - lowest)*cos(slice*i), false),
                                    255.0*(data[i].amplitude - lowest)/(highest - lowest)*sin(slice*i),
                                    absRelu(255.0*(data[i].amplitude - lowest)/(highest - lowest)*cos(slice*i), true)
@@ -33,7 +33,7 @@ class ColorGenerator {
       avgCol = averageColor(avgCol, color);
     }
 
-    return avgCol
+    return avgCol;
   }
 
   private:
@@ -55,13 +55,13 @@ class ColorGenerator {
       data[i] = data[i + skip];
     }
 
-    for(i = len - skip; i < len; i++) {
-      data[i] = struct FreqData{0,0};
+    for(int i = len - skip; i < len; i++) {
+      data[i] = FreqData{0,0};
     }
   }
 
   static Color averageColor(struct Color c1, struct Color c2) {
-    return Color{sqrt(c1.R^2 + c2.R^2), sqrt(c1.G^2 + c2.G^2), sqrt(c1.B^2 + c2.b^2)}
+    return Color{sqrt(c1.R^2 + c2.R^2), sqrt(c1.G^2 + c2.G^2), sqrt(c1.B^2 + c2.B^2)};
   }
 
   static double getLowestAmp(struct FreqData data[], unsigned int len) {

@@ -38,7 +38,7 @@ void startListening() {
     }
   }
 
-//  computeBass();
+  computeBass();
 }
 
 
@@ -83,14 +83,14 @@ void computeBass() {
     //    Serial.println(vRealBass[i], 1);    //View only this line in serial plotter to visualize the bins
   }
 
-//  unsigned int dataLength = sizeof(data) / sizeof(data[0]);
-//  updateBassColor(data, dataLength);
+  unsigned int dataLength = sizeof(data) / sizeof(data[0]);
+  updateBassColor(data, dataLength);
   delay(1000000);
 }
 
-//void updateBassColor(FreqData data[], unsigned int dataLength) {
-//
-//}
+void updateBassColor(FreqData data[], unsigned int dataLength) {
+
+}
 
 
 void computeVocal() {
