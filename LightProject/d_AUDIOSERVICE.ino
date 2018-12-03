@@ -77,38 +77,38 @@ void computeBass() {
     FreqData entry = {.frequency = frequency, .amplitude = amplitude};
     data[f] = entry;
 
-    Serial.println(data[f].frequency);
-    //    Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / BASS_SAMPLES, 1);
-    //    Serial.print(" ");
-    //    Serial.println(vRealBass[i], 1);    //View only this line in serial plotter to visualize the bins
+//    Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / BASS_SAMPLES, 1);
+//    Serial.print(" ");
+//    Serial.println(vRealBass[i], 1);    //View only this line in serial plotter to visualize the bins
   }
 
   //Real
-  
+
   Color newColor = getColor(data, dataLength);
   setBass(newColor);
+//  delay(1000000);
 
   //Testing
-//  FreqData test[15];
-//  test[0] = {19.5, 100000};
-//  test[1] = {29.3, 0};
-//  test[2] = {39.1, 0};
-//  test[3] = {48.8, 0};
-//  test[4] = {58.6, 0};
-//  test[5] = {68.4, 0};
-//  test[6] = {78.1, 0};
-//  test[7] = {87.9, 0};
-//  test[8] = {97.7, 0};
-//  test[9] = {107.4, 0};
-//  test[10] = {117.2, 0};
-//  test[11] = {127, 0};
-//  test[12] = {136.7, 0};
-//  test[13] = {146.5, 0};
-//  test[14] = {156.3, 100000};
-//  Color newColor = getColor(test, 15);
-//  setBass(newColor);
-//
-//  delay(100000);
+  //  FreqData test[15];
+  //  test[0] = {19.5, 100000};
+  //  test[1] = {29.3, 0};
+  //  test[2] = {39.1, 0};
+  //  test[3] = {48.8, 0};
+  //  test[4] = {58.6, 0};
+  //  test[5] = {68.4, 0};
+  //  test[6] = {78.1, 0};
+  //  test[7] = {87.9, 0};
+  //  test[8] = {97.7, 0};
+  //  test[9] = {107.4, 0};
+  //  test[10] = {117.2, 0};
+  //  test[11] = {127, 0};
+  //  test[12] = {136.7, 0};
+  //  test[13] = {146.5, 0};
+  //  test[14] = {156.3, 100000};
+  //  Color newColor = getColor(test, 15);
+  //  setBass(newColor);
+  //
+  //  delay(100000);
 }
 
 void computeVocal() {

@@ -10,9 +10,9 @@ const int analog_pin = A0;
 const int SAMPLING_FREQUENCY = 10000; //Hz, must be less than 10000 due to ADC
 const int BASS_SAMPLES = 1024; //Must be a power of 2 - higher is slower, but allows for lower frequency
 const int VOCAL_SAMPLES = 256;
-const double MIN_BASS_FREQ = 20;
+const double MIN_BASS_FREQ = 30;
 const double MAX_BASS_FREQ = 150;
 
 
 //Filtering
-const double NOISE_BASELINE = 70000;
+const double NOISE_BASELINE = 30000;
