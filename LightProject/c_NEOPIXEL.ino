@@ -10,7 +10,7 @@ void setupNeopixel() {
 void setBass(struct Color color) {
   for (int led = 0; led < LED_TOTAL; led++)
   {
-    strand.setPixelColor(led, strand.Color(color.R, color.G, color.B));
+    strand.setPixelColor(led, strand.Color(int(color.R), int(color.G), int(color.B)));
   }
 
   strand.show();

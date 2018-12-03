@@ -61,11 +61,11 @@ void computeBass() {
   BassFFT.ComplexToMagnitude(vRealBass, vImagBass, BASS_SAMPLES);
 
   unsigned int vRealBassLength = sizeof(vRealBass) / sizeof(vRealBass[0]); //must pass this in because arrays as params are treated as pointers; sizeof would be the size of the pointer, not the array
-  unsigned int startIndex = getIndexAboveFrequency(vRealBassLength, 20, BASS_SAMPLES) - 1;
-  unsigned int endIndex = getIndexAboveFrequency(vRealBassLength, 150, BASS_SAMPLES);
-  unsigned int windowLength = endIndex - startIndex;
+  unsigned int startIndex = getIndexAboveFrequency(vRealBassLength, MIN_BASS_FREQ, BASS_SAMPLES) - 1;
+  unsigned int endIndex = getIndexAboveFrequency(vRealBassLength, MAX_BASS_FREQ, BASS_SAMPLES);
+  unsigned int dataLength = endIndex - startIndex;
 
-  FreqData data[windowLength];
+  FreqData data[dataLength];
 
   for (int i = startIndex; i <= endIndex; i++)
   {
@@ -83,28 +83,32 @@ void computeBass() {
     //    Serial.println(vRealBass[i], 1);    //View only this line in serial plotter to visualize the bins
   }
 
-  unsigned int dataLength = sizeof(data) / sizeof(data[0]);
-
+  //Real
+  
+  Color newColor = getColor(data, dataLength);
+  setBass(newColor);
 
   //Testing
-  FreqData test[15];
-  test[0] = {19.5, 0};
-  test[1] = {29.3, 100000};
-  test[2] = {39.1, 0};
-  test[3] = {48.8, 0};
-  test[4] = {58.6, 0};
-  test[5] = {68.4, 0};
-  test[6] = {78.1, 0};
-  test[7] = {87.9, 0};
-  test[8] = {97.7, 0};
-  test[9] = {107.4, 0};
-  test[10] = {117.2, 0};
-  test[11] = {127, 0};
-  test[12] = {136.7, 0};
-  test[13] = {146.5, 0};
-  test[14] = {156.3, 0};
-  Color newColor = getColor(test, 15);
-  setBass(newColor);
+//  FreqData test[15];
+//  test[0] = {19.5, 100000};
+//  test[1] = {29.3, 0};
+//  test[2] = {39.1, 0};
+//  test[3] = {48.8, 0};
+//  test[4] = {58.6, 0};
+//  test[5] = {68.4, 0};
+//  test[6] = {78.1, 0};
+//  test[7] = {87.9, 0};
+//  test[8] = {97.7, 0};
+//  test[9] = {107.4, 0};
+//  test[10] = {117.2, 0};
+//  test[11] = {127, 0};
+//  test[12] = {136.7, 0};
+//  test[13] = {146.5, 0};
+//  test[14] = {156.3, 100000};
+//  Color newColor = getColor(test, 15);
+//  setBass(newColor);
+//
+//  delay(100000);
 }
 
 void computeVocal() {
