@@ -1,3 +1,15 @@
+struct FreqData {
+  double frequency;
+  double amplitude;
+};
 
-#include <Adafruit_NeoPixel.h> //https://github.com/adafruit/Adafruit_NeoPixel
-#include "arduinoFFT.h" // Standard Arduino FFT library
+void setup() {
+  Serial.begin(115200);
+
+//  setupAudioService();
+//  setupNeopixel();
+}
+
+void loop() {
+//  startListening();
+}
