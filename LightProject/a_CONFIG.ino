@@ -7,12 +7,12 @@ const int LED_PIN = 13;
 
 //FFT
 const int analog_pin = A0;
-const int SAMPLING_FREQUENCY = 10000; //Hz, must be less than 10000 due to ADC
-const int BASS_SAMPLES = 1024; //Must be a power of 2 - higher is slower, but allows for lower frequency
+const int SAMPLING_FREQUENCY = 950; //Hz, must be less than 10000 due to ADC
+const int BASS_SAMPLES = 64; //Must be a power of 2
 const int VOCAL_SAMPLES = 256;
 const double MIN_BASS_FREQ = 30;
-const double MAX_BASS_FREQ = 150;
+const double MAX_BASS_FREQ = 120;
 
 
 //Filtering
-const double NOISE_BASELINE = 30000;
+const double NOISE_BASELINE = 1000; //Definitely want this to be percent based with a minimum bound (or min between average and peak?)

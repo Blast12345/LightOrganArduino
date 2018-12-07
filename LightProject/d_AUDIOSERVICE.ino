@@ -1,8 +1,7 @@
 #include "arduinoFFT.h" // Standard Arduino FFT library
 
-
 unsigned int sampling_period_us;
-unsigned long microseconds, oldTime;
+unsigned long microseconds;
 
 arduinoFFT BassFFT = arduinoFFT();
 double vRealBass[BASS_SAMPLES];
@@ -13,18 +12,21 @@ double vRealVocal[VOCAL_SAMPLES];
 double vImagVocal[VOCAL_SAMPLES];
 
 
-
 void setupAudioService() {
   sampling_period_us = round(1000000 * (1.0 / SAMPLING_FREQUENCY));
 }
 
 
 void startListening() {
+  microseconds = micros();
+
   for (int i = 0; i < BASS_SAMPLES; i++)
   {
-    microseconds = micros() - oldTime;
-    oldTime = microseconds;
+    //Wait for specified period of time
+    while (micros() - microseconds < sampling_period_us);
+    microseconds += sampling_period_us;
 
+    //Read in new data and assign to the arrays
     double newAnalogRead = analogRead(analog_pin);
 
     vRealBass[i] = newAnalogRead;
@@ -32,10 +34,6 @@ void startListening() {
 
     vRealVocal[i % VOCAL_SAMPLES] = newAnalogRead;
     vImagVocal[i % VOCAL_SAMPLES] = 0;
-
-    while (micros() < (microseconds + sampling_period_us)) {
-      /* do nothing until we enter the next sampling period - think of this as a delay */
-    }
   }
 
   computeBass();
