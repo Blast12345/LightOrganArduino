@@ -13,9 +13,8 @@ double vImagVocal[VOCAL_SAMPLES];
 
 
 void setupAudioService() {
-  sampling_period_us = round(1000000 * (1.0 / SAMPLING_FREQUENCY));
+  sampling_period_us = round(1000000 * (1.0 / BASS_SAMPLING_FREQUENCY));
 }
-
 
 void startListening() {
   microseconds = micros();
@@ -37,7 +36,7 @@ void startListening() {
     vRealVocal[i % VOCAL_SAMPLES] = newAnalogRead;
     vImagVocal[i % VOCAL_SAMPLES] = 0;
   }
-
+  
   computeBass();
 }
 
@@ -45,7 +44,7 @@ void startListening() {
 int getIndexAboveFrequency(unsigned int vRealLength, double targetFrequency, unsigned int sampleCount) {
 
   for (int i = 0; i < vRealLength; i++) {
-    double currentFrequency = (i * 1.0 * SAMPLING_FREQUENCY) / sampleCount;
+    double currentFrequency = (i * 1.0 * BASS_SAMPLING_FREQUENCY) / sampleCount;
 
     if (currentFrequency > targetFrequency) {
       return i;
@@ -71,7 +70,7 @@ void computeBass() {
   {
     unsigned int f = i - startIndex;
 
-    double frequency = (i * 1.0 * SAMPLING_FREQUENCY) / BASS_SAMPLES;
+    double frequency = (i * 1.0 * BASS_SAMPLING_FREQUENCY) / BASS_SAMPLES;
     double amplitude = vRealBass[i];
 
     FreqData entry = {.frequency = frequency, .amplitude = amplitude};

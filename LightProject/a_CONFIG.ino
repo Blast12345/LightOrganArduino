@@ -15,8 +15,8 @@ const double MAX_BASS_FREQ = 100;
 
 const int VOCAL_SAMPLING_FREQUENCY = 9500; //Hz, must be less than 10000 due to ADC
 const int VOCAL_SAMPLES = 64;
-const double MIN_BASS_FREQ = 200; //These frequencies are just guesses - maybe start with some acapella tracks.
-const double MAX_BASS_FREQ = 1000;
+const double MIN_VOCAL_FREQ = 200; //These frequencies are just guesses - maybe start with some acapella tracks.
+const double MAX_VOCAL_FREQ = 1000;
 
 
 //Filtering
