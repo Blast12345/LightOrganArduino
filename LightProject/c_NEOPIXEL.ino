@@ -7,13 +7,26 @@ void setupNeopixel() {
   strand.begin();
 }
 
+struct Color deltaC = Color {0, 0, 0};
+struct Color startC = Color {0, 0, 0}; //Easier than retrieving the current color from the neopixel byte array (getPixelColor func)
+
 void setBass(struct Color color) {
+  deltaC = color - startC;
+}
+
+void tickColor(double transitionPercent) {
+  struct Color currentColor = (deltaC * transitionPercent) + startC;
+
   for (int led = 0; led < LED_TOTAL; led++)
   {
-    strand.setPixelColor(led, strand.Color(int(color.R), int(color.G), int(color.B)));
+    strand.setPixelColor(led, strand.Color(int(currentColor.R), int(currentColor.G), int(currentColor.B)));
   }
 
   strand.show();
+
+  if (transitionPercent == 1) {
+    startC = currentColor;
+  }
 }
 
 //For intensity - determine some scale and pass in either 0-1 or 0-100.
@@ -28,7 +41,7 @@ void setVocal(struct Color color, double intensity) {
 
   //Second Half
   for (int led = LED_HALF; led < LED_TOTAL; led++) {
-    strand.setPixelColor(led, strand.Color(int(color.R), int(color.G), int(color.B)));
+    strand.setPixelColor(led, strand.Color(color.R, color.G, color.B));
   }
 
 }

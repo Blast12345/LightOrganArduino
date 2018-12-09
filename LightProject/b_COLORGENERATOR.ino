@@ -1,13 +1,44 @@
 #define PI 3.1415926535897932384626433832795
 
 struct Color {
-  double R;
-  double G;
-  double B;
+  int R;
+  int G;
+  int B;
+
+  struct Color operator-(struct Color color) const {
+    double deltaR = R - color.R;
+    double deltaG = G - color.G;
+    double deltaB = B - color.B;
+    return Color {deltaR, deltaG, deltaB};
+  }
+
+  struct Color operator+(struct Color color) const {
+    double deltaR = R + color.R;
+    double deltaG = G + color.G;
+    double deltaB = B + color.B;
+    return Color {deltaR, deltaG, deltaB};
+  }  
+
+  struct Color operator*(double scale) const {
+    double deltaR = R * scale;
+    double deltaG = G * scale;
+    double deltaB = B * scale;
+    return Color {deltaR, deltaG, deltaB};
+  }
 };
 
 struct Color getColor(struct FreqData data[], unsigned int len) {
   //TODO: Maybe reimplement the noise filter later. Definitely add some scaling logic.
+
+  filterNoise(data, len);
+
+  Serial.println();
+  Serial.print("MIN:");
+  Serial.print(data[0].frequency);
+  Serial.println();
+  Serial.print("MAX:");
+  Serial.print(data[len - 1].frequency);
+  Serial.println();
 
   //Find Total Amplitude(s)
   double weightedAmp = 0;
@@ -25,16 +56,58 @@ struct Color getColor(struct FreqData data[], unsigned int len) {
   //TODO: CALCULATE COLORS
   double minFrequency = data[0].frequency;
   double maxFrequency = data[len - 1].frequency;
-  double middleFrequency = (minFrequency + maxFrequency) / 2;
+  double range = maxFrequency - minFrequency;
+  double scaleFreq = average - minFrequency;
+  //  double middleFrequency = (maxFrequency + minFrequency) / 2;
 
-  double RB_Range = middleFrequency - minFrequency; //Upper - lower
-  double GB_Range = maxFrequency - middleFrequency;
+  //  double RB_Range = middleFrequency - minFrequency; //Upper - lower
+  //  double GB_Range = maxFrequency - middleFrequency;
 
-  double R = 0;
-  double G = 0;
-  double B = 0;
+  int R = colorWave(0, average, minFrequency, maxFrequency);
+  int G = colorWave(-(2 * 256), average, minFrequency, maxFrequency);
+  int B = colorWave(-(4 * 256), average, minFrequency, maxFrequency);
 
-  return Color {R, G, B};
+  Serial.println(average);
+  //  Serial.print(R);
+  //  Serial.print(" ");
+  //  Serial.print(G);
+  //  Serial.print(" ");
+  //  Serial.println(B);
+
+  if (totalAmp > 0) {
+    return Color {R, G, B};
+  } else {
+    return Color {0, 0, 0};
+  }
+}
+
+int colorWave(int offset, double frequency, double minFrequency, double maxFrequency) {
+  double ratio = (6.0 * 256.0) / (maxFrequency - minFrequency);
+  int scalePos = (int((frequency - minFrequency) * ratio) + offset) % (6 * 256);
+  int colPos = scalePos % 256;
+
+  if (scalePos < 0) {
+    scalePos = 6 * 256 + scalePos;
+  }
+
+  if (colPos < 0) {
+    colPos = 256 + colPos;
+  }
+
+  //  Serial.print("Ratio:  ");
+  //  Serial.println(ratio);
+
+  if (0 <= scalePos && scalePos < 256) {
+    return 255;
+  } else if (256 <= scalePos && scalePos < 2 * 256) {
+    return 255 - colPos;
+  } else if (256 * 4 <= scalePos && scalePos < 256 * 5) {
+    return colPos;
+  } else if (256 * 5 <= scalePos && scalePos < 256 * 6) {
+    return 255;
+  } else {
+    return 0;
+  }
 }
 
 //double absRelu(double val, bool neg) {
@@ -45,13 +118,15 @@ struct Color getColor(struct FreqData data[], unsigned int len) {
 //  }
 //}
 
-//void filterNoise(struct FreqData data[], unsigned int len) {
-//  for (int i = 0; i < len; i++) {
-//    if (data[i].amplitude < NOISE_BASELINE) {
-//      data[i] = FreqData{0, 0};
-//    }
-//  }
-//}
+void filterNoise(struct FreqData data[], unsigned int len) {
+  for (int i = 0; i < len; i++) {
+    if (data[i].amplitude < NOISE_BASELINE) {
+      data[i].amplitude = 0;
+    }
+  }
+}
+
+
 
 //struct Color averageColor(struct Color c1, struct Color c2) {
 //  struct Color col = Color {

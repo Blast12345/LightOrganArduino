@@ -17,6 +17,26 @@ void setupAudioService() {
 }
 
 void startListening() {
+  //  Serial.println("New Loop");
+  //  double largeNumber = 100;
+  //
+  //  Color newColor = Color { 255, 0, 0 };
+  //  setBass(newColor);
+  //  tickColor(1);
+  //
+  //  Color newColor2 = Color { 0, 0, 255 };
+  //  setBass(newColor2);
+  //
+  //  for (int i = 0; i < largeNumber; i++)
+  //  {
+  //    double percent = double(i) / (largeNumber - 1.0);
+  //    tickColor(percent);
+  //    delay(100);
+  //  }
+  //
+  //  Serial.println("DONE");
+
+
   microseconds = micros();
 
   for (int i = 0; i < BASS_SAMPLES; i++)
@@ -35,8 +55,12 @@ void startListening() {
 
     vRealVocal[i % VOCAL_SAMPLES] = newAnalogRead;
     vImagVocal[i % VOCAL_SAMPLES] = 0;
+
+    double percent = double(i) / (BASS_SAMPLES - 1);
+    Serial.println(percent);
+    tickColor(percent);
   }
-  
+
   computeBass();
 }
 
@@ -83,31 +107,31 @@ void computeBass() {
 
   //Real
 
-  //  Color newColor = getColor(data, dataLength);
-  //  setBass(newColor);
+  Color newColor = getColor(data, dataLength);
+  setBass(newColor);
   //  delay(1000000);
 
   //Testing
-  FreqData test[15];
-  test[0] = {19.5, 5000};
-  test[1] = {29.3, 0};
-  test[2] = {39.1, 0};
-  test[3] = {48.8, 0};
-  test[4] = {58.6, 0};
-  test[5] = {68.4, 0};
-  test[6] = {78.1, 0};
-  test[7] = {87.9, 0};
-  test[8] = {97.7, 0};
-  test[9] = {107.4, 0};
-  test[10] = {117.2, 0};
-  test[11] = {127, 0};
-  test[12] = {136.7, 0};
-  test[13] = {146.5, 0};
-  test[14] = {156.3, 5000};
-  Color newColor = getColor(test, 15);
-  setBass(newColor);
-
-  delay(100000);
+  //  FreqData test[15];
+  //  test[0] = {19.5, 0};
+  //  test[1] = {29.3, 0};
+  //  test[2] = {39.1, 0};
+  //  test[3] = {48.8, 0};
+  //  test[4] = {58.6, 0};
+  //  test[5] = {68.4, 0};
+  //  test[6] = {78.1, 0};
+  //  test[7] = {87.9, 0};
+  //  test[8] = {97.7, 0};
+  //  test[9] = {107.4, 0};
+  //  test[10] = {117.2, 0};
+  //  test[11] = {127, 0};
+  //  test[12] = {136.7, 0};
+  //  test[13] = {146.5, 0};
+  //  test[14] = {156.3, 0};
+  //  Color newColor = getColor(test, 15);
+  //  setBass(newColor);
+  //
+  //  delay(100000);
 }
 
 void computeVocal() {
