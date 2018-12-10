@@ -17,26 +17,6 @@ void setupAudioService() {
 }
 
 void startListening() {
-  //  Serial.println("New Loop");
-  //  double largeNumber = 100;
-  //
-  //  Color newColor = Color { 255, 0, 0 };
-  //  setBass(newColor);
-  //  tickColor(1);
-  //
-  //  Color newColor2 = Color { 0, 0, 255 };
-  //  setBass(newColor2);
-  //
-  //  for (int i = 0; i < largeNumber; i++)
-  //  {
-  //    double percent = double(i) / (largeNumber - 1.0);
-  //    tickColor(percent);
-  //    delay(100);
-  //  }
-  //
-  //  Serial.println("DONE");
-
-
   microseconds = micros();
 
   for (int i = 0; i < BASS_SAMPLES; i++)
@@ -57,8 +37,21 @@ void startListening() {
     vImagVocal[i % VOCAL_SAMPLES] = 0;
 
     double percent = double(i) / (BASS_SAMPLES - 1);
-    Serial.println(percent);
-    tickColor(percent);
+//
+//    if (percent == 1) {
+//      tickColor(1);
+//    } else if (percent >= 0.66) {
+//      tickColor(0.66);
+//    } else if (percent >= 0.33) {
+//      tickColor(0.33);
+//    }
+    
+//    percent = percent * 1;
+//    if (percent > 1) {
+//      percent = 1;
+//    }
+
+//    tickColor(percent);
   }
 
   computeBass();

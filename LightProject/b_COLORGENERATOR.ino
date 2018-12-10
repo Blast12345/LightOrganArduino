@@ -25,6 +25,13 @@ struct Color {
     double deltaB = B * scale;
     return Color {deltaR, deltaG, deltaB};
   }
+
+  bool operator==(struct Color color) const {
+    bool deltaR = R == color.R;
+    bool deltaG = G == color.G;
+    bool deltaB = B == color.B;
+    return deltaR && deltaG && deltaB;
+  }
 };
 
 struct Color getColor(struct FreqData data[], unsigned int len) {
