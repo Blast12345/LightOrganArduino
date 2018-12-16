@@ -8,10 +8,10 @@ const int LED_PIN = 13;
 //FFT
 const int analog_pin = A0;
 
-const int BASS_SAMPLING_FREQUENCY = 950; //Hz, must be less than 10000 due to ADC
-const int BASS_SAMPLES = 64; //Must be a power of 2
+const int BASS_SAMPLING_FREQUENCY = 1900; //Hz, must be less than 10000 due to ADC
+const int BASS_SAMPLES = 128; //Must be a power of 2
 const double MIN_BASS_FREQ = 30;
-const double MAX_BASS_FREQ = 100;
+const double MAX_BASS_FREQ = 110;
 
 const int VOCAL_SAMPLING_FREQUENCY = 9500; //Hz, must be less than 10000 due to ADC
 const int VOCAL_SAMPLES = 64;
